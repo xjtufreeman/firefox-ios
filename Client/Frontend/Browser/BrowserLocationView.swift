@@ -12,8 +12,14 @@ protocol BrowserLocationViewDelegate {
     func browserLocationViewDidLongPressReaderMode(browserLocationView: BrowserLocationView)
 }
 
+enum InputMode {
+    case URL
+    case Search
+}
+
 class BrowserLocationView : UIView, ToolbarTextFieldDelegate {
     var delegate: BrowserLocationViewDelegate?
+    var inputMode: InputMode = .URL
 
     private var lockImageView: UIImageView!
     private var readerModeButton: ReaderModeButton!
@@ -229,9 +235,13 @@ class BrowserLocationView : UIView, ToolbarTextFieldDelegate {
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         active = true
         layer.borderColor = editingBorderColor
-        textField.text = url?.absoluteString
         setNeedsUpdateConstraints()
         delegate?.browserLocationViewDidTapLocation(self)
+
+        if inputMode == .URL {
+            textField.text = url?.absoluteString
+        }
+
         return true
     }
 
